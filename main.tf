@@ -1,21 +1,21 @@
-terraform{
-    required_providers{
-        aws = {
-            source = "hashicorp/aws"
-            version = "~> 5.82"
-        }
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.82"
     }
-}
-provider "aws" {
-    profile = "devops"
-    region = "ap-south-2"
+  }
 }
 
+provider "aws" {
+  profile = "devops"
+  region  = "ap-south-1"
+}
 
 # Create a VPC
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"  # Define the CIDR block for the VPC
-  enable_dns_support = true
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
     Name = "MainVPC"
@@ -30,11 +30,11 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-# Create public subnets (adjust CIDR ranges based on your needs)
+# Create public subnets
 resource "aws_subnet" "subnet_a" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.1.0/24"  # Public subnet 1
-  availability_zone       = "ap-south-2a"
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "ap-south-1a"
   map_public_ip_on_launch = true
   tags = {
     Name = "PublicSubnetA"
@@ -43,15 +43,15 @@ resource "aws_subnet" "subnet_a" {
 
 resource "aws_subnet" "subnet_b" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.2.0/24"  # Public subnet 2
-  availability_zone       = "ap-south-2b"
+  cidr_block              = "10.0.2.0/24"
+  availability_zone       = "ap-south-1b"
   map_public_ip_on_launch = true
   tags = {
     Name = "PublicSubnetB"
   }
 }
 
-# Create a route table for the public subnets
+# Create a route table for public subnets
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
   tags = {
@@ -77,7 +77,7 @@ resource "aws_route_table_association" "subnet_b_association" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-# Outputs to verify the setup
+# Outputs
 output "vpc_id" {
   value = aws_vpc.main.id
 }
