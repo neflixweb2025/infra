@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  profile = "devops"
+ 
   region  = "ap-south-1"
 }
 
